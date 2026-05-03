@@ -1,0 +1,606 @@
+<style>
+/* ========== よろけ計算ツール (wiki3埋め込み用) ========== */
+#vhsc-wrap *, #vhsc-wrap *::before, #vhsc-wrap *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+}
+#vhsc-wrap {
+  --vhsc-bg: #1a1710;
+  --vhsc-bg2: #211e14;
+  --vhsc-surface: #25221a;
+  --vhsc-surface2: #302c1e;
+  --vhsc-border: #4a4228;
+  --vhsc-border2: #5c5234;
+  --vhsc-gold: #c8902a;
+  --vhsc-gold2: #e8b84b;
+  --vhsc-text: #e8dfc8;
+  --vhsc-text2: #b0a880;
+  --vhsc-text3: #7a7060;
+  --vhsc-red-bg: #2a1818;
+  --vhsc-green-bg: #182618;
+  --vhsc-blue-bg: #181e2a;
+  --vhsc-amber-bg: #2a2010;
+  --vhsc-amber: #d4a020;
+  --vhsc-r: 6px;
+  --vhsc-rl: 10px;
+  font-family: 'Georgia', 'Noto Serif JP', serif;
+  background: var(--vhsc-bg);
+  color: var(--vhsc-text);
+  line-height: 1.6;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2.5rem;
+}
+#vhsc-wrap .vhsc-header {
+  text-align: center;
+  padding: 1.25rem 0 1rem;
+  border-bottom: 1px solid var(--vhsc-border2);
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+#vhsc-wrap .vhsc-header::before,
+#vhsc-wrap .vhsc-header::after {
+  content: '⬥'; position: absolute; top: 1.6rem;
+  color: var(--vhsc-gold); font-size: 12px;
+}
+#vhsc-wrap .vhsc-header::before { left: 0; }
+#vhsc-wrap .vhsc-header::after  { right: 0; }
+#vhsc-wrap .vhsc-header h2 {
+  font-size: 20px; font-weight: normal;
+  color: var(--vhsc-gold2); letter-spacing: 0.12em; margin-bottom: 3px;
+}
+#vhsc-wrap .vhsc-header p {
+  font-size: 12px; color: var(--vhsc-text3);
+  font-family: sans-serif; letter-spacing: 0.02em;
+}
+#vhsc-wrap .vhsc-section {
+  background: var(--vhsc-surface);
+  border: 1px solid var(--vhsc-border);
+  border-radius: var(--vhsc-rl);
+  margin-bottom: 1rem; overflow: hidden;
+}
+#vhsc-wrap .vhsc-shead {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0.65rem 1rem;
+  background: var(--vhsc-surface2);
+  border-bottom: 1px solid var(--vhsc-border);
+}
+#vhsc-wrap .vhsc-snum {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--vhsc-gold); color: #1a1710;
+  font-size: 12px; font-weight: bold; font-family: sans-serif;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+#vhsc-wrap .vhsc-stitle {
+  font-size: 14px; color: var(--vhsc-gold2); letter-spacing: 0.06em;
+}
+#vhsc-wrap .vhsc-sbody { padding: 0.9rem 1rem; }
+#vhsc-wrap .vhsc-fgrid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+#vhsc-wrap .vhsc-field {
+  display: flex; flex-direction: column; gap: 5px;
+}
+#vhsc-wrap .vhsc-field.full { grid-column: 1 / -1; }
+#vhsc-wrap .vhsc-field label {
+  font-size: 12px; color: var(--vhsc-text2);
+  font-family: sans-serif; letter-spacing: 0.02em;
+}
+#vhsc-wrap .vhsc-field select,
+#vhsc-wrap .vhsc-field input[type="number"] {
+  height: 34px; padding: 0 8px;
+  background: var(--vhsc-bg2);
+  border: 1px solid var(--vhsc-border2);
+  border-radius: var(--vhsc-r);
+  color: var(--vhsc-text);
+  font-size: 13px; font-family: sans-serif; width: 100%;
+  transition: border-color 0.15s;
+}
+#vhsc-wrap .vhsc-field select:focus,
+#vhsc-wrap .vhsc-field input[type="number"]:focus {
+  outline: none; border-color: var(--vhsc-gold);
+}
+#vhsc-wrap .vhsc-field select option { background: #211e14; }
+#vhsc-wrap .vhsc-chkgrp {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+#vhsc-wrap .vhsc-chkitem {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--vhsc-bg2);
+  border: 1px solid var(--vhsc-border);
+  border-radius: 999px; padding: 4px 10px;
+  cursor: pointer; font-family: sans-serif;
+  font-size: 12px; color: var(--vhsc-text2);
+  user-select: none; transition: all 0.15s;
+}
+#vhsc-wrap .vhsc-chkitem:hover {
+  border-color: var(--vhsc-border2); color: var(--vhsc-text);
+}
+#vhsc-wrap .vhsc-chkitem input { display: none; }
+#vhsc-wrap .vhsc-chkdot {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1px solid currentColor; flex-shrink: 0;
+}
+#vhsc-wrap .vhsc-chkitem.active {
+  background: var(--vhsc-amber-bg);
+  border-color: var(--vhsc-gold); color: var(--vhsc-gold2);
+}
+#vhsc-wrap .vhsc-chkitem.active .vhsc-chkdot {
+  background: var(--vhsc-gold); border-color: var(--vhsc-gold);
+}
+#vhsc-wrap .vhsc-toggle-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 1rem; justify-content: flex-end;
+  cursor: pointer; user-select: none;
+}
+#vhsc-wrap .vhsc-toggle-row input { display: none; }
+#vhsc-wrap .vhsc-ttrack {
+  width: 28px; height: 16px;
+  background: var(--vhsc-bg2);
+  border: 1px solid var(--vhsc-border2);
+  border-radius: 999px; position: relative;
+  transition: background 0.15s; flex-shrink: 0;
+}
+#vhsc-wrap .vhsc-tthumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--vhsc-text3); transition: all 0.15s;
+}
+#vhsc-wrap .vhsc-toggle-row.on .vhsc-ttrack {
+  background: var(--vhsc-amber-bg); border-color: var(--vhsc-gold);
+}
+#vhsc-wrap .vhsc-toggle-row.on .vhsc-tthumb {
+  left: 14px; background: var(--vhsc-gold);
+}
+#vhsc-wrap .vhsc-tlabel {
+  font-size: 11px; color: var(--vhsc-text3); font-family: sans-serif;
+}
+#vhsc-wrap .vhsc-formula {
+  display: none; margin-top: 8px;
+  background: var(--vhsc-bg);
+  border: 1px solid var(--vhsc-border);
+  border-radius: var(--vhsc-r);
+  padding: 8px 12px;
+  font-size: 11px; font-family: 'Courier New', monospace;
+  color: var(--vhsc-text3); line-height: 1.8; white-space: pre-wrap;
+}
+#vhsc-wrap .vhsc-formula.visible { display: block; }
+#vhsc-wrap .vhsc-divider {
+  border: none; border-top: 1px solid var(--vhsc-border); margin: 10px 0;
+}
+#vhsc-wrap .vhsc-rgrid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+#vhsc-wrap .vhsc-rcard {
+  border-radius: var(--vhsc-r); padding: 10px 12px; text-align: center;
+}
+#vhsc-wrap .vhsc-rcard.blue { background: var(--vhsc-blue-bg); border: 1px solid #2a3858; }
+#vhsc-wrap .vhsc-rcard.amber { background: var(--vhsc-amber-bg); border: 1px solid #4a3818; }
+#vhsc-wrap .vhsc-rcard.green { background: var(--vhsc-green-bg); border: 1px solid #283818; }
+#vhsc-wrap .r-label {
+  font-size: 10px; font-family: sans-serif;
+  color: var(--vhsc-text3); margin-bottom: 4px; letter-spacing: 0.04em;
+}
+#vhsc-wrap .r-value {
+  font-size: 24px; font-weight: normal; line-height: 1;
+}
+#vhsc-wrap .r-value.blue  { color: #6aabf0; }
+#vhsc-wrap .r-value.amber { color: var(--vhsc-gold2); }
+#vhsc-wrap .r-value.green { color: #7acc50; }
+#vhsc-wrap .r-sub {
+  font-size: 11px; font-family: sans-serif;
+  color: var(--vhsc-text3); margin-top: 3px;
+}
+#vhsc-wrap .vhsc-status {
+  margin-top: 8px; padding: 6px 10px;
+  border-radius: var(--vhsc-r);
+  font-size: 12px; font-family: sans-serif;
+  display: flex; align-items: center; gap: 6px;
+}
+#vhsc-wrap .st-ok  { background: var(--vhsc-green-bg); color: #7acc50; border: 1px solid #304820; }
+#vhsc-wrap .st-ng  { background: var(--vhsc-red-bg);   color: #f07070; border: 1px solid #4a2020; }
+#vhsc-wrap .st-warn { background: var(--vhsc-amber-bg); color: var(--vhsc-gold2); border: 1px solid #4a3818; }
+#vhsc-wrap .vhsc-rtag {
+  font-size: 10px; font-family: sans-serif;
+  letter-spacing: 0.08em; padding: 2px 8px;
+  border-radius: 999px; font-weight: bold;
+}
+#vhsc-wrap .tag-direct { background: var(--vhsc-blue-bg);  color: #6aabf0;           border: 1px solid #3a5880; }
+#vhsc-wrap .tag-block  { background: var(--vhsc-amber-bg); color: var(--vhsc-gold2); border: 1px solid #5a4820; }
+#vhsc-wrap .tag-parry  { background: var(--vhsc-green-bg); color: #7acc50;           border: 1px solid #304820; }
+#vhsc-wrap .vhsc-rhead {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+#vhsc-wrap .vhsc-rsec { margin-bottom: 10px; }
+#vhsc-wrap .vhsc-rsec:last-child { margin-bottom: 0; }
+#vhsc-wrap .vhsc-foot {
+  text-align: center; font-size: 11px;
+  color: var(--vhsc-text3); font-family: sans-serif;
+  margin-top: 1rem; line-height: 2;
+}
+</style>
+
+<div id="vhsc-wrap">
+
+  <div class="vhsc-header">
+    <h2>よろけ計算ツール</h2>
+    <p>Valheim 戦闘システム ／ よろけシステム</p>
+  </div>
+
+  <div class="vhsc-toggle-row" id="vhsc-toggleRow" onclick="vhscToggleFormula()">
+    <div class="vhsc-ttrack"><div class="vhsc-tthumb"></div></div>
+    <span class="vhsc-tlabel">計算式を表示する</span>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="vhsc-section">
+    <div class="vhsc-shead">
+      <div class="vhsc-snum">1</div>
+      <div class="vhsc-stitle">攻撃側の情報</div>
+    </div>
+    <div class="vhsc-sbody">
+      <div class="vhsc-fgrid">
+
+        <div class="vhsc-field">
+          <label>攻撃者の種類</label>
+          <select id="vhsc-attacker" onchange="vhscOnAttackerChange()">
+            <option value="player">プレイヤー</option>
+            <option value="mob" selected>MOB・ボス</option>
+          </select>
+        </div>
+
+        <div class="vhsc-field">
+          <label>MOBの難易度★</label>
+          <select id="vhsc-mobstar" onchange="vhscCalc()">
+            <option value="0" selected>★なし（基礎値そのまま）</option>
+            <option value="1">★1（基礎値 ＋50%）</option>
+            <option value="2">★2（基礎値 ＋100%）</option>
+          </select>
+        </div>
+
+        <div class="vhsc-field">
+          <label>ゲーム難易度（MOB側補正）</label>
+          <select id="vhsc-difficulty" onchange="vhscCalc()">
+            <option value="1" selected>ノーマル（×1.0）</option>
+            <option value="1.5">ハード（×1.5）</option>
+            <option value="2">ハードコア（×2.0）</option>
+          </select>
+        </div>
+
+        <div class="vhsc-field">
+          <label>武器種（よろけ補正値）</label>
+          <select id="vhsc-weapon" onchange="vhscCalc()">
+            <optgroup label="プレイヤー武器">
+              <option value="2">両手鈍器（×2）</option>
+              <option value="1.5">両手斧 メイン攻撃（×1.5）</option>
+              <option value="1">片手各種・槍・杖・弓・クロスボウ（×1）</option>
+              <option value="0">火・毒・凍結属性（×0）</option>
+            </optgroup>
+            <optgroup label="MOB攻撃">
+              <option value="1" selected>MOBの攻撃（×1）</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="vhsc-field">
+          <label>マルチ人数補正</label>
+          <select id="vhsc-multi" onchange="vhscCalc()">
+            <option value="1" selected>1人（×1.000）</option>
+            <option value="1.04">2人（×1.040）</option>
+            <option value="1.08">3人（×1.080）</option>
+            <option value="1.12">4人（×1.120）</option>
+            <option value="1.16">5人（×1.160）</option>
+            <option value="1.20">6人（×1.200）</option>
+          </select>
+        </div>
+
+        <div class="vhsc-field">
+          <label>攻撃属性値（基礎値）</label>
+          <input type="number" id="vhsc-atk" value="60" min="0" max="9999" oninput="vhscCalc()" />
+        </div>
+
+      </div>
+      <div class="vhsc-formula" id="vhsc-f-atk"></div>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="vhsc-section">
+    <div class="vhsc-shead">
+      <div class="vhsc-snum">2</div>
+      <div class="vhsc-stitle">プレイヤーステータス</div>
+    </div>
+    <div class="vhsc-sbody">
+      <div class="vhsc-fgrid">
+        <div class="vhsc-field">
+          <label>最大HP</label>
+          <input type="number" id="vhsc-maxhp" value="90" min="1" max="9999" oninput="vhscCalc()" />
+        </div>
+        <div class="vhsc-field">
+          <label>防御力（アーマー合計）</label>
+          <input type="number" id="vhsc-armor" value="46" min="0" max="999" oninput="vhscCalc()" />
+        </div>
+        <div class="vhsc-field">
+          <label>ブロックアーマー（盾/武器）</label>
+          <input type="number" id="vhsc-blockArmor" value="40" min="0" max="999" oninput="vhscCalc()" />
+        </div>
+        <div class="vhsc-field">
+          <label>ブロックスキルレベル</label>
+          <input type="number" id="vhsc-blockSkill" value="0" min="0" max="100" oninput="vhscCalc()" />
+        </div>
+        <div class="vhsc-field full">
+          <label>受け流しボーナス（パリィ倍率）</label>
+          <select id="vhsc-parryBonus" onchange="vhscCalc()">
+            <option value="1.5" selected>×1.5（木の盾・鉄の盾など）</option>
+            <option value="2">×2.0</option>
+            <option value="2.5">×2.5</option>
+          </select>
+        </div>
+      </div>
+
+      <hr class="vhsc-divider" />
+
+      <div class="vhsc-field">
+        <label>攻撃属性の耐性（複数選択可）</label>
+        <div class="vhsc-chkgrp" id="vhsc-resistGroup">
+          <label class="vhsc-chkitem"><div class="vhsc-chkdot"></div>斬り（×0.5）<input type="checkbox" value="0.5" data-attr="slash" /></label>
+          <label class="vhsc-chkitem"><div class="vhsc-chkdot"></div>叩き（×0.5）<input type="checkbox" value="0.5" data-attr="blunt" /></label>
+          <label class="vhsc-chkitem"><div class="vhsc-chkdot"></div>刺し（×0.5）<input type="checkbox" value="0.5" data-attr="pierce" /></label>
+          <label class="vhsc-chkitem"><div class="vhsc-chkdot"></div>火（×0.5）<input type="checkbox" value="0.5" data-attr="fire" /></label>
+          <label class="vhsc-chkitem"><div class="vhsc-chkdot"></div>凍結（×0.5）<input type="checkbox" value="0.5" data-attr="frost" /></label>
+          <label class="vhsc-chkitem"><div class="vhsc-chkdot"></div>毒（×0.5）<input type="checkbox" value="0.5" data-attr="poison" /></label>
+          <label class="vhsc-chkitem"><div class="vhsc-chkdot"></div>霊（×0.5）<input type="checkbox" value="0.5" data-attr="spirit" /></label>
+          <label class="vhsc-chkitem"><div class="vhsc-chkdot"></div>弱点（×1.5）<input type="checkbox" value="1.5" data-attr="weak" /></label>
+        </div>
+      </div>
+
+      <div class="vhsc-field" style="margin-top:8px;">
+        <label>特殊防具による物理耐性強化</label>
+        <div class="vhsc-chkgrp" id="vhsc-phys75Group">
+          <label class="vhsc-chkitem"><div class="vhsc-chkdot"></div>斬り・叩き・刺しの耐性が×0.75（特定防具装備中）<input type="checkbox" /></label>
+        </div>
+      </div>
+
+      <hr class="vhsc-divider" />
+
+      <div class="vhsc-field">
+        <label>計算する条件</label>
+        <div class="vhsc-chkgrp" id="vhsc-condGroup">
+          <label class="vhsc-chkitem active"><div class="vhsc-chkdot"></div>直撃<input type="checkbox" value="direct" checked /></label>
+          <label class="vhsc-chkitem active"><div class="vhsc-chkdot"></div>ブロック<input type="checkbox" value="block" checked /></label>
+          <label class="vhsc-chkitem active"><div class="vhsc-chkdot"></div>パリィ<input type="checkbox" value="parry" checked /></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Results -->
+  <div class="vhsc-section">
+    <div class="vhsc-shead">
+      <div class="vhsc-snum">3</div>
+      <div class="vhsc-stitle">計算結果</div>
+    </div>
+    <div class="vhsc-sbody">
+
+      <div class="vhsc-rsec" id="vhsc-res-direct">
+        <div class="vhsc-rhead"><div class="vhsc-rtag tag-direct">直撃</div></div>
+        <div class="vhsc-rgrid">
+          <div class="vhsc-rcard blue">
+            <div class="r-label">よろけ値</div>
+            <div class="r-value blue" id="vhsc-val-stagger">—</div>
+            <div class="r-sub">攻撃によるよろけ量</div>
+          </div>
+          <div class="vhsc-rcard amber">
+            <div class="r-label">許容よろけ値</div>
+            <div class="r-value amber" id="vhsc-val-tolerance">—</div>
+            <div class="r-sub">最大HP × 0.4</div>
+          </div>
+        </div>
+        <div class="vhsc-status" id="vhsc-st-direct">—</div>
+        <div class="vhsc-formula" id="vhsc-f-direct"></div>
+      </div>
+
+      <hr class="vhsc-divider" id="vhsc-div-block" />
+
+      <div class="vhsc-rsec" id="vhsc-res-block">
+        <div class="vhsc-rhead"><div class="vhsc-rtag tag-block">ブロック</div></div>
+        <div class="vhsc-rgrid">
+          <div class="vhsc-rcard amber">
+            <div class="r-label">実効ブロックアーマー</div>
+            <div class="r-value amber" id="vhsc-val-effBlock">—</div>
+            <div class="r-sub">スキル補正後</div>
+          </div>
+          <div class="vhsc-rcard blue">
+            <div class="r-label">ブロックよろけ値</div>
+            <div class="r-value blue" id="vhsc-val-blockStagger">—</div>
+            <div class="r-sub">攻撃² ÷ ブロック ÷ 4</div>
+          </div>
+        </div>
+        <div class="vhsc-status" id="vhsc-st-block">—</div>
+        <div class="vhsc-formula" id="vhsc-f-block"></div>
+      </div>
+
+      <hr class="vhsc-divider" id="vhsc-div-parry" />
+
+      <div class="vhsc-rsec" id="vhsc-res-parry">
+        <div class="vhsc-rhead"><div class="vhsc-rtag tag-parry">パリィ</div></div>
+        <div class="vhsc-rgrid">
+          <div class="vhsc-rcard amber">
+            <div class="r-label">パリィ時ブロックアーマー</div>
+            <div class="r-value amber" id="vhsc-val-parryBlock">—</div>
+            <div class="r-sub" id="vhsc-sub-parryBlock">受け流しボーナス × 1.5</div>
+          </div>
+          <div class="vhsc-rcard green">
+            <div class="r-label">パリィよろけ値</div>
+            <div class="r-value green" id="vhsc-val-parryStagger">—</div>
+            <div class="r-sub">攻撃² ÷ パリィブロック ÷ 4</div>
+          </div>
+        </div>
+        <div class="vhsc-rgrid" style="margin-top:8px;">
+          <div class="vhsc-status" id="vhsc-st-parry-enemy">—</div>
+          <div class="vhsc-status" id="vhsc-st-parry-self">—</div>
+        </div>
+        <div class="vhsc-formula" id="vhsc-f-parry"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="vhsc-foot">
+    暗殺ボーナス・モーション値・乱数は省略（×1として計算）<br>
+    <span style="color:#c87050;">⚠ ボスはよろけが発生しません。本ツールはボスを攻撃する側には使用できません。</span>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // チェックアイテム初期化
+  document.querySelectorAll('#vhsc-wrap .vhsc-chkitem').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      el.classList.toggle('active');
+      vhscCalc();
+    });
+  });
+
+  window.vhscOnAttackerChange = function(){
+    var isMob = document.getElementById('vhsc-attacker').value === 'mob';
+    var wpSel = document.getElementById('vhsc-weapon');
+    if(isMob){
+      var opts = wpSel.querySelectorAll('option');
+      opts.forEach(function(o){
+        if(o.closest('optgroup') && o.closest('optgroup').label.indexOf('MOB') >= 0) o.selected = true;
+      });
+    }
+    vhscCalc();
+  };
+
+  var vhscShowFormula = false;
+  window.vhscToggleFormula = function(){
+    vhscShowFormula = !vhscShowFormula;
+    var row = document.getElementById('vhsc-toggleRow');
+    if(vhscShowFormula) row.classList.add('on'); else row.classList.remove('on');
+    document.querySelectorAll('#vhsc-wrap .vhsc-formula').forEach(function(el){
+      if(vhscShowFormula) el.classList.add('visible'); else el.classList.remove('visible');
+    });
+  };
+
+  window.vhscCalc = function(){
+    var atkBase    = parseFloat(document.getElementById('vhsc-atk').value) || 0;
+    var stars      = parseInt(document.getElementById('vhsc-mobstar').value) || 0;
+    var diff       = parseFloat(document.getElementById('vhsc-difficulty').value);
+    var multi      = parseFloat(document.getElementById('vhsc-multi').value);
+    var staggerMult= parseFloat(document.getElementById('vhsc-weapon').value);
+    var maxhp      = parseFloat(document.getElementById('vhsc-maxhp').value) || 1;
+    var blockArmor = parseFloat(document.getElementById('vhsc-blockArmor').value) || 0;
+    var blockSkill = parseFloat(document.getElementById('vhsc-blockSkill').value) || 0;
+    var parryBonus = parseFloat(document.getElementById('vhsc-parryBonus').value);
+
+    var atk = atkBase * (1 + stars * 0.5);
+
+    var resist = 1;
+    var activeResists = [];
+    document.querySelectorAll('#vhsc-resistGroup .vhsc-chkitem.active input').forEach(function(cb){
+      resist *= parseFloat(cb.value);
+      if(cb.dataset.attr) activeResists.push(cb.dataset.attr);
+    });
+    var phys75Active = document.querySelector('#vhsc-phys75Group .vhsc-chkitem.active') !== null;
+    if(phys75Active){
+      var hasPhys = ['slash','blunt','pierce'].some(function(a){ return activeResists.indexOf(a) >= 0; });
+      if(!hasPhys) resist *= 0.75;
+    }
+
+    var baseAtk = atk * diff * multi;
+    var effectiveAtk = baseAtk * resist;
+    var tolerance = maxhp * 0.4;
+    var effBlock = blockArmor * (blockSkill * 0.005 + 1);
+
+    // 表示条件
+    var conds = {};
+    document.querySelectorAll('#vhsc-condGroup .vhsc-chkitem').forEach(function(el){
+      var v = el.querySelector('input').value;
+      conds[v] = el.classList.contains('active');
+    });
+    document.getElementById('vhsc-res-direct').style.display = conds.direct ? '' : 'none';
+    document.getElementById('vhsc-res-block').style.display  = conds.block  ? '' : 'none';
+    document.getElementById('vhsc-res-parry').style.display  = conds.parry  ? '' : 'none';
+    document.getElementById('vhsc-div-block').style.display  = (conds.direct && conds.block)  ? '' : 'none';
+    document.getElementById('vhsc-div-parry').style.display  = ((conds.direct||conds.block) && conds.parry) ? '' : 'none';
+
+    // 直撃
+    var staggerVal = effectiveAtk * staggerMult;
+    document.getElementById('vhsc-val-stagger').textContent   = staggerVal.toFixed(1);
+    document.getElementById('vhsc-val-tolerance').textContent = tolerance.toFixed(1);
+    var stL = document.getElementById('vhsc-st-direct');
+    if(staggerMult === 0){
+      stL.className = 'vhsc-status st-warn';
+      stL.textContent = '⬥ 火・毒・凍結属性はよろけ補正値0のためよろけ発生なし';
+    } else if(staggerVal <= tolerance){
+      stL.className = 'vhsc-status st-ok';
+      stL.textContent = '✓ よろけなし（' + staggerVal.toFixed(1) + ' ≤ ' + tolerance.toFixed(1) + '）';
+    } else {
+      stL.className = 'vhsc-status st-ng';
+      stL.textContent = '✗ よろけ発生！ 被ダメ2倍（' + staggerVal.toFixed(1) + ' > ' + tolerance.toFixed(1) + '）';
+    }
+
+    // ブロック
+    document.getElementById('vhsc-val-effBlock').textContent = effBlock.toFixed(1);
+    var blockStagger = effBlock > 0 ? (effectiveAtk * effectiveAtk) / (effBlock * 4) : 9999;
+    document.getElementById('vhsc-val-blockStagger').textContent = effBlock > 0 ? blockStagger.toFixed(1) : '∞';
+    var blL = document.getElementById('vhsc-st-block');
+    if(effBlock === 0){
+      blL.className = 'vhsc-status st-ng';
+      blL.textContent = '✗ ブロックアーマー0のためブロック無効';
+    } else if(blockStagger <= tolerance){
+      blL.className = 'vhsc-status st-ok';
+      blL.textContent = '✓ ブロックよろけなし（' + blockStagger.toFixed(1) + ' ≤ ' + tolerance.toFixed(1) + '）';
+    } else {
+      blL.className = 'vhsc-status st-ng';
+      blL.textContent = '✗ ブロックよろけ発生！ ブロック解除→防御計算に移行（' + blockStagger.toFixed(1) + ' > ' + tolerance.toFixed(1) + '）';
+    }
+
+    // パリィ
+    var parryEffBlock = effBlock * parryBonus;
+    var parryStagger  = parryEffBlock > 0 ? (effectiveAtk * effectiveAtk) / (parryEffBlock * 4) : 9999;
+    document.getElementById('vhsc-val-parryBlock').textContent    = parryEffBlock.toFixed(1);
+    document.getElementById('vhsc-sub-parryBlock').textContent    = '受け流しボーナス × ' + parryBonus;
+    document.getElementById('vhsc-val-parryStagger').textContent  = parryEffBlock > 0 ? parryStagger.toFixed(1) : '∞';
+    var peL = document.getElementById('vhsc-st-parry-enemy');
+    var psL = document.getElementById('vhsc-st-parry-self');
+    if(parryEffBlock === 0){
+      peL.className = 'vhsc-status st-ng'; peL.textContent = '✗ ブロックアーマー0 パリィ不可';
+    } else if(parryStagger <= tolerance){
+      peL.className = 'vhsc-status st-ok'; peL.textContent = '✓ パリィ成立！ 敵よろけ発生';
+    } else {
+      peL.className = 'vhsc-status st-ng'; peL.textContent = '✗ パリィ失敗（よろけ値超過）';
+    }
+    if(staggerVal <= tolerance){
+      psL.className = 'vhsc-status st-ok'; psL.textContent = '✓ 自分はよろけなし';
+    } else {
+      psL.className = 'vhsc-status st-ng'; psL.textContent = '✗ 自分もよろけ発生（両者よろけ状態）';
+    }
+
+    // 計算式
+    var phys75note = (phys75Active && !['slash','blunt','pierce'].some(function(a){ return activeResists.indexOf(a)>=0; })) ? ' × 0.75（物理特殊防具）' : '';
+    document.getElementById('vhsc-f-atk').textContent =
+      '★補正後基礎値 = ' + atkBase + ' × (1 + ' + stars + '×0.5) = ' + atk.toFixed(2) + '\n' +
+      '補正後攻撃値  = ' + atk.toFixed(2) + ' × ' + diff + '（難易度）× ' + multi + '（人数）= ' + baseAtk.toFixed(2) + '\n' +
+      '耐性補正後    = ' + baseAtk.toFixed(2) + ' × ' + resist.toFixed(3) + '（耐性' + phys75note + '）= ' + effectiveAtk.toFixed(2) + '\n' +
+      'よろけ値      = ' + effectiveAtk.toFixed(2) + ' × ' + staggerMult + '（よろけ補正）= ' + staggerVal.toFixed(2);
+    document.getElementById('vhsc-f-direct').textContent =
+      'よろけ値 ' + staggerVal.toFixed(2) + '　vs　許容よろけ値 ' + tolerance.toFixed(2) + '（HP' + maxhp + ' × 0.4）';
+    document.getElementById('vhsc-f-block').textContent =
+      '実効ブロック   = ' + blockArmor + ' × (' + blockSkill + ' × 0.005 + 1) = ' + effBlock.toFixed(2) + '\n' +
+      'ブロックよろけ = ' + effectiveAtk.toFixed(2) + '² ÷ (' + effBlock.toFixed(2) + ' × 4) = ' + blockStagger.toFixed(2);
+    document.getElementById('vhsc-f-parry').textContent =
+      'パリィブロック = ' + effBlock.toFixed(2) + ' × ' + parryBonus + '（受け流しボーナス）= ' + parryEffBlock.toFixed(2) + '\n' +
+      'パリィよろけ値 = ' + effectiveAtk.toFixed(2) + '² ÷ (' + parryEffBlock.toFixed(2) + ' × 4) = ' + parryStagger.toFixed(2);
+
+    document.querySelectorAll('#vhsc-wrap .vhsc-formula').forEach(function(el){
+      if(vhscShowFormula) el.classList.add('visible'); else el.classList.remove('visible');
+    });
+  };
+
+  vhscCalc();
+})();
+</script>
